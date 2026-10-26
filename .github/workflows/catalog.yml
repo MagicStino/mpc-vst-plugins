@@ -7,12 +7,13 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['catalog/**', 'tools/catalog_*.py', 'tools/app_*.py', 'tools/catalog_site/**', 'tools/skin_compat.py', 'tools/skin_roles_2x.json', 'tools/test_skin_compat.py']
+    paths: ['.github/workflows/catalog.yml', 'catalog/**', 'tools/catalog_*.py', 'tools/app_*.py', 'tools/catalog_site/**', 'tools/skin_compat.py', 'tools/skin_roles_2x.json', 'tools/test_skin_compat.py']
   pull_request:
-    paths: ['catalog/**', 'tools/catalog_*.py', 'tools/app_*.py', 'tools/catalog_site/**', 'tools/skin_compat.py', 'tools/skin_roles_2x.json', 'tools/test_skin_compat.py']
+    paths: ['.github/workflows/catalog.yml', 'catalog/**', 'tools/catalog_*.py', 'tools/app_*.py', 'tools/catalog_site/**', 'tools/skin_compat.py', 'tools/skin_roles_2x.json', 'tools/test_skin_compat.py']
 permissions:
   contents: read
   issues: write
+# Issue triage and Pages publishing belong to upstream; forks still build and upload catalog artifacts.
 # One run at a time per branch: two overlapping runs each opened the same issue (#112, #113).
 concurrency:
   group: catalog-${{ github.ref }}
@@ -49,7 +50,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python3 tools/app_resolve.py
       - name: Open and close issues for failing releases
-        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+        if: ${{ github.repository == 'sd88me/mpc-vst-plugins' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python3 tools/catalog_issues.py
@@ -57,7 +58,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         run: python3 tools/catalog_site.py
       - name: Upload the Pages artifact
-        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+        if: ${{ github.repository == 'sd88me/mpc-vst-plugins' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
         uses: actions/upload-pages-artifact@v3
         with:
           path: catalog/dist/site
@@ -69,7 +70,7 @@ jobs:
           path: catalog/dist/
   deploy:
     # Needs Settings > Pages > Source: GitHub Actions (one-time, by the repo owner).
-    if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+    if: ${{ github.repository == 'sd88me/mpc-vst-plugins' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
     needs: build
     runs-on: ubuntu-latest
     permissions:
