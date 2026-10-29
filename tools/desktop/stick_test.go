@@ -420,3 +420,46 @@ func TestAdvancedStickOpensTheManagerOnlyOnceUnlessAsked(t *testing.T) {
 		t.Fatal("open-plugin-manager.txt did not open it")
 	}
 }
+
+// enable_ssh.sh's set_root_password must work with a busybox that has no chpasswd (a real Force), and must not claim success
+// when nothing changed.
+func TestSetRootPasswordWithoutChpasswd(t *testing.T) {
+	src := string(stickEnableSSHSH)
+	i := strings.Index(src, "set_root_password() {")
+	j := strings.Index(src[i:], "\n}\n")
+	if i < 0 || j < 0 {
+		t.Fatal("function not found")
+	}
+	fn := src[i : i+j+3]
+	run := func(tools map[string]string) (string, error) {
+		d := t.TempDir()
+		bin := filepath.Join(d, "bin")
+		os.MkdirAll(bin, 0755)
+		for _, n := range []string{"grep", "cp", "cat", "rm", "awk", "printf", "echo"} {
+			if p, err := exec.LookPath(n); err == nil {
+				os.Symlink(p, filepath.Join(bin, n))
+			}
+		}
+		for n, body := range tools {
+			os.WriteFile(filepath.Join(bin, n), []byte("#!/bin/sh\n"+body+"\n"), 0755)
+		}
+		shadow := filepath.Join(d, "shadow")
+		os.WriteFile(shadow, []byte("root:*:19000:0:99999:7:::\ndaemon:*:19000:0:99999:7:::\n"), 0600)
+		sh, _ := exec.LookPath("sh")
+		c := exec.Command(sh, "-c", fn+"\nset_root_password hunter2")
+		c.Env = []string{"PATH=" + bin, "ENABLE_SSH_SHADOW=" + shadow}
+		_, err := c.CombinedOutput()
+		b, _ := os.ReadFile(shadow)
+		return string(b), err
+	}
+	got, err := run(map[string]string{"mkpasswd": `echo '$6$salt$hashed'`})
+	if err != nil || !strings.HasPrefix(got, "root:$6$salt$hashed:19000") || !strings.Contains(got, "daemon:*:") {
+		t.Fatalf("mkpasswd route: %v %q", err, got)
+	}
+	if got, err = run(map[string]string{}); err == nil {
+		t.Fatalf("no tool at all reported success: %q", got)
+	}
+	if got, err = run(map[string]string{"chpasswd": "exit 0"}); err == nil {
+		t.Fatalf("a chpasswd that changes nothing reported success: %q", got)
+	}
+}
