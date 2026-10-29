@@ -78,6 +78,8 @@ details.collapse > summary .hint { font:600 12px/1 var(--display); letter-spacin
 details.collapse[open] > summary .hint { font-size:0; }
 details.collapse[open] > summary .hint::after { content:"Hide"; font-size:12px; }
 details.collapse[open] > summary { margin-bottom:6px; }
+#stick-mode > details.collapse { background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:16px 18px; margin-bottom:16px; }
+#stick-mode > details.collapse > section { background:none; border:0; border-radius:0; padding:0; margin:0 0 12px; }
 .row input[type=number] { width:100%; font:400 15px var(--text); color:var(--fg); background:var(--bg); border:1px solid var(--line); border-radius:6px; padding:10px 12px; }
 ul.list li.grp { display:block; padding:12px 2px 6px; font:700 12px/1 var(--display); letter-spacing:.12em; text-transform:uppercase; color:var(--muted); border-bottom:1px solid var(--line); }
 #drivelist li { flex-wrap:wrap; align-items:center; } #drivelist .t { flex:1 1 180px; min-width:0; } #drivelist button { flex:none; }
@@ -244,7 +246,7 @@ footer { color:var(--muted); font-size:12.5px; margin-top:24px; }
   </div>
 </section>
 </details>
-<details id="esd" class="collapse" open>
+<details id="esd" class="collapse">
 <summary><h2>Plugin manager stick (all MPC OS versions, including 3.10)</h2><span class="hint">Show</span></summary>
 <section id="es" class="guide">
   <ul>
