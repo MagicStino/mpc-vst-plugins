@@ -25,7 +25,6 @@ try:
         b = pw.chromium.launch(executable_path=os.environ.get("CHROMIUM") or None); pg = b.new_page(viewport={"width": 1000, "height": 900})
         pg.route("**/api/**", handle)
         pg.goto("http://127.0.0.1:8813/index.html?t=x"); time.sleep(0.5)
-        pg.click("#l1 summary")
         check("form hidden until an OS is chosen", not pg.is_visible("#l1-form"))
         pg.check("input[name=l1-os][value=new]")
         check("3.10 hides the writer", not pg.is_visible("#l1-form"))

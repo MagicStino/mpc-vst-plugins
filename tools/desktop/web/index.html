@@ -105,19 +105,18 @@ footer { color:var(--muted); font-size:12.5px; margin-top:24px; }
 <section id="which" class="guide">
   <h2>Which one do I need?</h2>
   <ul>
-    <li><b>Plugin install stick (no SSH needed)</b>: <i>the easy one. Pick this if you are not sure.</i>
+    <li><b>Basic user: one-prompt install stick</b>: <i>the simplest. Pick this if you are not sure and are on MPC OS 3.9.1 or earlier.</i>
       <ul>
-        <li>Nothing to set up on your MPC and no computer connection.</li>
-        <li>You write a USB stick here, plug it in, confirm <b>one prompt</b>, then browse and install plugins on the MPC's own screen.</li>
-        <li>Needs the MPC online (Wi-Fi or Ethernet).</li>
-        <li><i>Suits:</i> most people.</li>
+        <li>Plug it in, confirm <b>one prompt</b>, and MPC restarts with the OpenMPC Plugin Manager G2 installed. No network needed for the install.</li>
       </ul></li>
-    <li><b>Install over SSH</b>: <i>for modded units that already have root SSH.</i>
+    <li><b>Plugin manager stick</b>: <i>browse and install plugins on the MPC's own screen, and the way in on MPC OS 3.10.</i>
       <ul>
-        <li>Installs plugins, addins, your own zips and patches from this computer, with remove, update and backup tools.</li>
-        <li><i>Suits:</i> people who already use SSH, or run a modded MPC or Force.</li>
+        <li>Nothing to set up on your MPC and no computer connection. Needs the MPC online (Wi-Fi or Ethernet).</li>
       </ul></li>
-    <li><b>Want SSH on a stock unit?</b> Use the stick tab's <b>Advanced</b> section: it turns SSH on from a stick (MPC OS up to 3.9.1). Then the SSH tab works.</li>
+    <li><b>For developers: SSH</b>: <i>for modded units that already have root SSH, or to turn SSH on from a stick (MPC OS up to 3.9.1).</i>
+      <ul>
+        <li>The <b>Install over SSH</b> tab installs plugins, addins, your own zips and patches from this computer, with remove, update and backup tools.</li>
+      </ul></li>
   </ul>
 </section>
 
@@ -215,14 +214,51 @@ footer { color:var(--muted); font-size:12.5px; margin-top:24px; }
 </div>
 
 <div id="stick-mode">
+<details id="l1" class="collapse" open>
+<summary><h2>Basic user: one-prompt install stick (beta)</h2><span class="hint">Show</span></summary>
+<section class="guide">
+  <ul>
+    <li><b>What it is:</b> the simplest way. A stick that installs the <b>OpenMPC Plugin Manager G2</b> for you. Confirm one prompt and MPC restarts with it installed. No SSH, no network, no manager screens to learn. <i>Works on MPC OS 3.9.1 or earlier. Private beta.</i></li>
+    <li><b>Which MPC OS are you on?</b>
+      <label><input type="radio" name="l1-os" value="old"> 3.9.1 or earlier</label>
+      <label><input type="radio" name="l1-os" value="new"> 3.10</label>
+      <label><input type="radio" name="l1-os" value="unsure"> Not sure</label></li>
+  </ul>
+  <p class="msg" id="l1-os-msg" role="status" aria-live="polite"></p>
+  <div id="l1-form" hidden>
+    <div class="row">
+      <label class="f">Level 1 stick bundle (.zip)<input id="l1-bundle" type="text" placeholder="no published bundle yet: choose the file you were given" spellcheck="false"></label>
+      <button id="l1-bundle-browse" type="button">Browse…</button>
+    </div>
+    <div class="row">
+      <label class="f">Empty USB stick or folder<input id="l1-out" type="text" placeholder="a mounted stick, or Browse" spellcheck="false"></label>
+      <button id="l1-out-browse" type="button">Browse…</button>
+      <button class="primary" id="l1-build" type="button">Write stick…</button>
+    </div>
+    <p class="msg" id="l1-msg" role="status" aria-live="polite"></p>
+    <ol>
+      <li>Save your project. The install stops MPC.</li>
+      <li>Insert the stick and choose <b>Open</b> on the prompt.</li>
+      <li>Wait for MPC to restart. A <code>g2-install-result.txt</code> on the stick says what happened.</li>
+    </ol>
+  </div>
+</section>
+</details>
 <section id="es" class="guide">
-  <h2>Plugin install stick (no SSH or connection needed)</h2>
+  <h2>Plugin manager stick (browse and install on the MPC)</h2>
   <ul>
     <li><b>What it is:</b> browse and install community plugins on the MPC's own screen, with no computer connection, password or setup. This writes a ready-made USB stick; you plug it into the MPC and confirm one prompt.</li>
     <li><b>Works on:</b>
       <ul>
         <li><b>MPC OS 3.9.1:</b> Gen1 MPC (Live, One, X, Key), Force and Gen2 (Live III, One G2, Key(s) G2).</li>
         <li><b>MPC OS 3.10:</b> Gen1 MPC (needs a one-time setup, see the steps below).</li>
+      </ul></li>
+    <li><b>Why use this one instead of the basic stick:</b>
+      <ul>
+        <li>Works on <b>MPC OS 3.10</b> too (the basic stick can't, 3.10 has no USB prompt).</li>
+        <li>Browse the whole plugin catalog on the MPC's screen and install, update or remove plugins, instead of only installing the G2 manager.</li>
+        <li>Choose where plugins go (internal drive, SD card, NVMe), and see what is already installed.</li>
+        <li>It also has an <b>OpenMPC Plugin Manager G2</b> button, so you can still get G2 from it.</li>
       </ul></li>
     <li><b>One stick fits every device</b> and picks the right version itself.</li>
     <li><b>Credit:</b> the on-device manager is <a href="https://github.com/Eurikon/plugin-manager-usb-for-open-mpc" target="_blank" rel="noopener">Plugin Manager USB for OPEN MPC</a> by <b>Twisted Cable</b> (MIT). This installer downloads a build of that project with the OpenMPC Plugin Manager G2 option added, from <a href="https://github.com/sd88me/plugin-manager-usb-for-open-mpc" target="_blank" rel="noopener">our fork</a> (<span id="es-ver"></span>, checked against a fixed checksum), and copies it to your stick.</li>
@@ -253,38 +289,8 @@ footer { color:var(--muted); font-size:12.5px; margin-top:24px; }
     <p class="lead"><b>Either way:</b> when you are done, tap <b>Return to MPC</b> and wait up to a minute. <i>Do not power off.</i></p>
   </div>
 </section>
-<details id="l1" class="collapse">
-<summary><h2>Beta: one-prompt G2 install stick (MPC OS 3.9.1 or earlier)</h2><span class="hint">Show</span></summary>
-<section class="guide">
-  <ul>
-    <li><b>What it is:</b> a stick that installs the <b>OpenMPC Plugin Manager G2</b> for you. Confirm one prompt and MPC restarts with it installed. No SSH, no network, no manager screens to learn. <i>Private beta.</i></li>
-    <li><b>Which MPC OS are you on?</b>
-      <label><input type="radio" name="l1-os" value="old"> 3.9.1 or earlier</label>
-      <label><input type="radio" name="l1-os" value="new"> 3.10</label>
-      <label><input type="radio" name="l1-os" value="unsure"> Not sure</label></li>
-  </ul>
-  <p class="msg" id="l1-os-msg" role="status" aria-live="polite"></p>
-  <div id="l1-form" hidden>
-    <div class="row">
-      <label class="f">Level 1 stick bundle (.zip)<input id="l1-bundle" type="text" placeholder="no published bundle yet: choose the file you were given" spellcheck="false"></label>
-      <button id="l1-bundle-browse" type="button">Browse…</button>
-    </div>
-    <div class="row">
-      <label class="f">Empty USB stick or folder<input id="l1-out" type="text" placeholder="a mounted stick, or Browse" spellcheck="false"></label>
-      <button id="l1-out-browse" type="button">Browse…</button>
-      <button class="primary" id="l1-build" type="button">Write stick…</button>
-    </div>
-    <p class="msg" id="l1-msg" role="status" aria-live="polite"></p>
-    <ol>
-      <li>Save your project. The install stops MPC.</li>
-      <li>Insert the stick and choose <b>Open</b> on the prompt.</li>
-      <li>Wait for MPC to restart. A <code>g2-install-result.txt</code> on the stick says what happened.</li>
-    </ol>
-  </div>
-</section>
-</details>
 <details id="dadv" class="collapse">
-<summary><h2>Advanced: turn on SSH (for developers)</h2><span class="hint">Show</span></summary>
+<summary><h2>For developers: turn on SSH</h2><span class="hint">Show</span></summary>
 <section id="st-intro" class="guide">
   <ul>
     <li><b>What this is for:</b> developers who want an ordinary <b>SSH login</b> on their device, to install plugins and addins with this installer's SSH tab or by hand.</li>
@@ -292,7 +298,7 @@ footer { color:var(--muted); font-size:12.5px; margin-top:24px; }
       <ul>
         <li>Turns <b>SSH</b> on (a key you give, or a password).</li>
         <li>Puts back any <b>addins</b> you already installed.</li>
-        <li>Optionally opens the <b>plugin manager</b>, exactly like the easy stick above (tick the box below).</li>
+        <li>Optionally also opens the <b>plugin manager</b>, as in the section above (tick the box below). A stick holds only one autorun, so a stick that turns on SSH has to carry the manager itself if you want both.</li>
       </ul></li>
     <li><b>How it works:</b> MPC OS has its own stock "USB script" reader, built in by Akai (not a security hole). A stick with the right files on it makes MPC ask one on-screen question, then run a script as root. <i>Nothing happens until you confirm that prompt on the device's own screen.</i> The check the reader needs depends on your device's firmware, so this reads your own stock update image once (nothing from it is kept or sent anywhere).</li>
     <li><b>Works on:</b> Gen1 MPC (Live, One, X, Key), Force and Gen2 (Live III, One G2, Key(s) G2), <b>but only on MPC OS up to 3.9.1</b>.
@@ -341,7 +347,7 @@ footer { color:var(--muted); font-size:12.5px; margin-top:24px; }
 </section>
 
 <section id="st3" class="off">
-  <h2><span class="n">3</span>Plugin manager</h2>
+  <h2><span class="n">3</span>Also include the plugin manager</h2>
   <label style="display:flex;gap:10px;align-items:flex-start;font:400 15px var(--text)"><input type="checkbox" id="st-withmgr" checked style="margin-top:4px">
     <span>Also open the plugin manager from this stick (recommended). It is Twisted Cable's Plugin Manager USB for OPEN MPC (our fork of it, with the OpenMPC Plugin Manager G2 option), downloaded and
     checked as for the easy stick above; this stick runs it right after turning SSH on.</span></label>
