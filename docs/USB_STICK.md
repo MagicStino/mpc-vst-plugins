@@ -20,7 +20,7 @@ updated to 3.10+;** it still works on any device still on 3.9.1 (or an earlier G
 The desktop app's no-SSH mode now leads with Eurikon's own stick (`Eurikon/plugin-manager-usb-for-open-mpc`, MIT, pinned to
 `v1.2.3` of the `sd88me/plugin-manager-usb-for-open-mpc` fork (upstream v1.2.2 plus the OpenMPC Plugin Manager G2 welcome-screen option), sha256 checked, see `tools/desktop/easystick.go`). Why: it needs no user firmware, and it is the only route that
 covers MPC OS 3.10, where our salted-hash stick (below) no longer works. One zip serves every device: `open.sh` picks the armv7 or
-aarch64 runtime by `uname -m`; on 3.9.1 the stock prompt launches it, on 3.10 the user inserts the stick (it opened by itself on a stock Live III) or, if nothing happens, first imports `Plugin Manager helper.xpa`
+aarch64 runtime by `uname -m`; on 3.9.1 the stock prompt launches it, on 3.10 the user first imports `Plugin Manager helper.xpa`
 (a controller profile) once. v1.2.0-beta.1 adds the Gen2 runtime; its author has only Gen1 hardware, so Gen2 is a beta until
 tested on a Live III. Not done: SSH and addin reapply on his stick. His `open.sh`, `setup.sh` and `launch.sh` are covered by
 `autorun.check`, so we cannot add a hook without the salt; the ask to him is an optional unchecked `extras/run.sh` that his
@@ -38,7 +38,7 @@ The desktop installer's stick page has three sections, each titled with the MPC 
    Force and a Live III (G2 0.2.1). The stock check covers `open.sh`, `run.sh` and `payload.sha256`, which pins the packages, so each G2
    release needs a rebuilt bundle (`tools/usb_g2/build_stick.py`, from the user's own firmware; only the derived check ships).
 2. **Plugin manager stick (all MPC OS versions, including 3.10).** Eurikon's stick (our fork build, pinned); the 3.10 route is his helper,
-   which must match the stick release (delete any old helper first). The installer now says to insert the stick first (on a stock 3.10 Live III it opened by itself, one observation, 2026-10-29), then Shift + Menu, then the helper setup; on the overlay (3.10 over 3.9.1) the stock 3.9.1 prompt appears as usual. Confirmed on a Live III running stock 3.10, 2026-10-29: it opened from
+   which must match the stick release (delete any old helper first). The helper is required once on 3.10; after that a fresh insertion offers Open (Eurikon's README), and Shift + Menu covers a stick that was already in at start-up. The stock-3.10 insertion in our test (2026-10-29) was the helper imported earlier: it sits in `/nvme/MPC Documents/Devices/Plugin Manager helper`, shared storage that kept it across the 3.10 overlay and stock 3.10. On the overlay (3.10 over 3.9.1) the stock 3.9.1 prompt appears as usual. Confirmed on a Live III running stock 3.10, 2026-10-29: it opened from
    the stick (also on insertion, not understood) and with Shift + Menu; on 3.9.1 Shift + Menu only reopens an armed session.
 3. **For developers: turn on SSH (MPC OS 3.9.1 and earlier only).** Our SSH and addin stick, optionally with his manager bundled. It cannot
    run on 3.10: the helper never runs the stick's `open.sh`. Findings (device, 2026-10-29): a Gen2 root is read-only, so a password cannot
