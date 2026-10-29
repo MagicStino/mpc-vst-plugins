@@ -1954,3 +1954,7 @@ poloq agreed to remove `plugin-manager` (poloq-instruments/mpc-vst-manager) beca
 - **SSH stick, Force (device-verified):** busybox has no `chpasswd`, so the password step died with status 127 and SSH stayed off. `enable_ssh.sh` now falls back to a crypt hash written to the shadow file (openssl, mkpasswd or cryptpw), then `passwd`, and reports success only if root's entry changed (offline-tested with stand-in tools; which of those the Force has is not yet confirmed).
 - **Bundled manager on the SSH stick** opened on every insertion; it now opens the first time and again only when `open-plugin-manager.txt` is on the stick.
 - **Windows:** the installer's folder dialog could not leave `C:\`; it now lists mounted drives.
+
+## 2026-10-29: plugin manager stick confirmed on a Live III running stock MPC OS 3.10 (device)
+
+On a Live III running stock 3.10 (not the 3.10-over-3.9.1 overlay), the plugin manager stick (the installer's "Plugin manager stick" section, with the helper imported) opened the manager when the stick was inserted and also with Shift + Menu. Why it opens on insertion is not understood (the helper may watch for the stick); to ask the manager's author. The installer's Gen2 callout said 3.10 was unconfirmed on stock and now says it is confirmed on a Live III.
