@@ -228,6 +228,7 @@ footer { color:var(--muted); font-size:12.5px; margin-top:24px; }
   </ul>
   <p class="msg" id="l1-os-msg" role="status" aria-live="polite"></p>
   <div id="l1-form" hidden>
+    <div id="l1-drives"></div>
     <div class="row">
       <label class="f">Level 1 stick bundle (.zip)<input id="l1-bundle" type="text" placeholder="no published bundle yet: choose the file you were given" spellcheck="false"></label>
       <button id="l1-bundle-browse" type="button">Browse…</button>
@@ -385,6 +386,7 @@ footer { color:var(--muted); font-size:12.5px; margin-top:24px; }
   <h3 id="bdlgtitle">Choose a folder</h3>
   <p class="small" id="bdlgpath" style="word-break:break-all"></p>
   <p class="msg" id="bdlgmsg" role="status" aria-live="polite"></p>
+  <div id="bdlgdrives" class="small" hidden></div>
   <ul class="list" id="bdlglist" style="max-height:320px;overflow:auto"></ul>
   <div class="actions"><button id="bdlgcancel">Cancel</button><button id="bdlgup">Up a level</button><button class="primary" id="bdlgpick">Use this folder</button></div>
 </dialog>
@@ -950,14 +952,23 @@ $("st-build").addEventListener("click", function () {
 /* Easy stick: download the pinned community manager stick and write it to a drive. */
 api("/api/stick/easyinfo").then(function (r) { $("es-ver").textContent = r.version; }).catch(function () { $("es-ver").textContent = "a pinned release"; });
 $("es-out-browse").addEventListener("click", function () { openBrowse("dir", $("es-out"), $("es-out").value.trim()); });
+/* Mounted drives, as buttons that fill a path field (and, in the folder dialog, jump to a drive: the dialog can't otherwise go above C:\ on Windows). */
 api("/api/drives").then(function (r) {
   var ds = r.drives || []; if (!ds.length) return;
-  var box = $("es-drives"); box.innerHTML = '<p class="small">Mounted drives: </p>';
-  var ul = el("ul", "list"); box.appendChild(ul);
+  [["es-drives", "es-out"], ["l1-drives", "l1-out"]].forEach(function (p) {
+    var box = $(p[0]); box.innerHTML = '<p class="small">Mounted drives: </p>';
+    var ul = el("ul", "list"); box.appendChild(ul);
+    ds.forEach(function (d) {
+      var li = el("li"); var b = el("button", "linkbtn", d.label + " (" + d.path + ")");
+      b.type = "button"; b.onclick = function () { $(p[1]).value = d.path; };
+      li.appendChild(b); ul.appendChild(li);
+    });
+  });
+  var bd = $("bdlgdrives"); bd.hidden = false; bd.appendChild(document.createTextNode("Drives: "));
   ds.forEach(function (d) {
-    var li = el("li"); var b = el("button", "linkbtn", d.label + " (" + d.path + ")");
-    b.type = "button"; b.onclick = function () { $("es-out").value = d.path; };
-    li.appendChild(b); ul.appendChild(li);
+    var b = el("button", "linkbtn", d.label); b.type = "button"; b.style.marginRight = "12px";
+    b.onclick = function () { browseTo(d.path); };
+    bd.appendChild(b);
   });
 }).catch(function () {});
 $("es-build").addEventListener("click", function () {

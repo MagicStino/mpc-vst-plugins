@@ -14,7 +14,8 @@ def handle(route):
         if posted[-1]["Out"].endswith("bad"): ok({"error": "payload.sha256 doesn't match"}, 400)
         else: ok({"out": posted[-1]["Out"], "version": "local file"})
     elif p == "stick/easyinfo": ok({"version": "v1.2.3"})
-    elif p == "drives": ok({"drives": []})
+    elif p == "drives": ok({"drives": [{"label": "E: (removable drive)", "path": "E:\\"}]})
+    elif p == "browse": ok({"dir": "C:\\", "parent": "", "entries": []})
     else: ok({}, 200)
 fails = []
 def check(name, cond):
@@ -33,6 +34,12 @@ try:
         check("not sure hides the writer", not pg.is_visible("#l1-form") and pg.inner_text("#l1-os-msg") != "")
         pg.check("input[name=l1-os][value=old]")
         check("3.9.1 shows the writer and clears the note", pg.is_visible("#l1-form") and pg.inner_text("#l1-os-msg") == "")
+        check("lists the mounted drive in the section", "E:" in pg.inner_text("#l1-drives"))
+        pg.click("#l1-drives button"); check("a drive button fills the stick field", pg.input_value("#l1-out") == "E:\\")
+        pg.fill("#l1-out", "")
+        pg.click("#l1-out-browse"); time.sleep(0.3)
+        check("the folder dialog offers drives when it can't go above C:", pg.is_visible("#bdlgdrives") and "E:" in pg.inner_text("#bdlgdrives"))
+        pg.click("#bdlgcancel")
         pg.click("#l1-build")
         check("asks for a drive first", "Pick an empty" in pg.inner_text("#l1-msg") and not posted)
         pg.fill("#l1-bundle", "/tmp/b.zip"); pg.fill("#l1-out", "/media/usb"); pg.click("#l1-build"); time.sleep(0.5)
