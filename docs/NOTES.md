@@ -1946,3 +1946,11 @@ new one (trigger max 70 %); at 2.8 ms (over `TRIGGER_WARN_PCT`) it WARNs. `bench
 ## 2026-10-29: poloq's Plugin Manager removed from the catalog (offline change)
 
 poloq agreed to remove `plugin-manager` (poloq-instruments/mpc-vst-manager) because it will not be worked on any more; the OpenMPC Plugin Manager G2 (`plugin-manager-g2`, a fork of it, Gen1 and Gen2) replaces it. Removed `catalog/plugins/plugin-manager.json` and its `catalog/added.json` line; the USB stick's default install id (`tools/usb_stick/make_stick.py`, `run.sh`) is now `plugin-manager-g2`. Older entries above that name `plugin-manager` describe what was true when they were run. Not run on a device: a stick built with the new default.
+
+## 2026-10-29: installer v1.1.0 pre-release, Level 1 stick and SSH-stick findings (device-verified where stated)
+
+- **Level 1 stick** (`tools/usb_g2`, installer's "Basic user" section): our own autorun script installs the bundled OpenMPC Plugin Manager G2. Confirm one prompt on MPC OS 3.9.1 or earlier and it installs. Worked on a Force (armv7) and a Live III (aarch64), device-verified. The installer asks the MPC OS first, because 3.10 has no USB prompt.
+- **SSH stick, Live III (device-verified):** the password option fails by design on a Gen2: its root is verity read-only, so the script refuses ("use a key"). A key works, on tmpfs, until the next reboot. The installer now blocks a password stick when the firmware looks Gen2 and says "Gen2 needs a key". The addin re-apply step also failed for a Commander install whose `addin-lib.sh` predates `resolve_dropin_root` (a stale installed addin, not a stick bug).
+- **SSH stick, Force (device-verified):** busybox has no `chpasswd`, so the password step died with status 127 and SSH stayed off. `enable_ssh.sh` now falls back to a crypt hash written to the shadow file (openssl, mkpasswd or cryptpw), then `passwd`, and reports success only if root's entry changed (offline-tested with stand-in tools; which of those the Force has is not yet confirmed).
+- **Bundled manager on the SSH stick** opened on every insertion; it now opens the first time and again only when `open-plugin-manager.txt` is on the stick.
+- **Windows:** the installer's folder dialog could not leave `C:\`; it now lists mounted drives.
