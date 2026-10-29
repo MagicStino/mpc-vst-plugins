@@ -143,3 +143,45 @@ func TestStickG2EndpointWritesALocalBundleAndRefusesWithoutOne(t *testing.T) {
 		t.Fatal("wrote something without a bundle")
 	}
 }
+
+func TestLooksGen2ByNameOrByAarch64Executable(t *testing.T) {
+	d := t.TempDir()
+	write := func(name string, b []byte) string {
+		p := filepath.Join(d, name)
+		os.WriteFile(p, b, 0644)
+		return p
+	}
+	elf := func(machine byte) []byte {
+		h := make([]byte, 64)
+		copy(h, "\x7fELF")
+		h[18] = machine
+		return h
+	}
+	for name, c := range map[string]struct {
+		path string
+		want bool
+	}{
+		"gen2 name":      {write("MPC-3.9.1-Gen2-update.img", []byte("x")), true},
+		"aarch64 binary": {write("MPC", elf(183)), true},
+		"arm binary":     {write("MPC-arm", elf(40)), false},
+		"plain image":    {write("MPC-3.9.1-update.img", []byte("not an elf")), false},
+		"missing":        {filepath.Join(d, "nope"), false},
+	} {
+		if got := looksGen2(c.path); got != c.want {
+			t.Errorf("%s: looksGen2 = %v, want %v", name, got, c.want)
+		}
+	}
+}
+
+func TestStickBuildRefusesAPasswordForAGen2Firmware(t *testing.T) {
+	a := &App{stickScan: map[string]*stickScan{"h": {Firmware: "x", Salt: []byte("s"), Gen2: true}}}
+	out := t.TempDir()
+	rec := httptest.NewRecorder()
+	a.stickBuild(rec, httptest.NewRequest("POST", "/api/stick/build", strings.NewReader(`{"ScanHandle":"h","Out":"`+out+`","SSHPassword":"force"}`)))
+	if rec.Code != 400 || !strings.Contains(rec.Body.String(), "Gen2") {
+		t.Fatalf("password for Gen2: %d %s", rec.Code, rec.Body)
+	}
+	if des, _ := os.ReadDir(out); len(des) != 0 {
+		t.Fatal("wrote a stick anyway")
+	}
+}

@@ -345,8 +345,10 @@ footer { color:var(--muted); font-size:12.5px; margin-top:24px; }
   <div id="st-sshpw-wrap" hidden>
     <p class="msg err"><b>Not recommended.</b> A password can be guessed or intercepted; a key can't. This also turns on
     password login for root over SSH, where before only a key would have worked: anyone who learns this password gets a
-    root shell on your device. Only works on a device whose root can be made writable (most Gen1/Force units); refused
-    outright on most Gen2 units, which have no writable place to keep it.</p>
+    root shell on your device. Only works on a device whose root can be made writable (most Gen1/Force units).
+    <b>Gen2 needs a key</b> (Live III, One G2, Key G2): their root is read-only, so a password can't be kept and the
+    stick's SSH step fails.</p>
+    <p class="msg err" id="st-gen2-warn" hidden><b>This firmware looks like a Gen2 one.</b> A password stick can't work on it, so the installer won't build one. Use a key.</p>
     <label class="f">Password<input id="st-sshpw" type="password" autocomplete="new-password" spellcheck="false"></label>
   </div>
 </section>
@@ -898,7 +900,8 @@ function stickPoll(since, log) {
     if (j.state === "running") { setTimeout(function () { stickPoll(j.next, log); }, 600); return; }
     ST.running = false;
     if (j.state === "done") {
-      ST.scanHandle = j.result;
+      ST.scanHandle = j.result; ST.gen2 = !!j.gen2;
+      $("st-gen2-warn").hidden = !ST.gen2;
       scanMsg("Found the salt. Now choose how you want to log in over SSH, then build the stick below.", "ok");
       $("st2").classList.remove("off"); $("st3").classList.remove("off"); $("st4").classList.remove("off");
     } else {
@@ -938,6 +941,7 @@ $("st-build").addEventListener("click", function () {
   if (!out) { msg($("st-buildmsg"), "Enter a folder to write the stick to.", "err"); return; }
   var key = stickSSHKey(), pw = stickSSHPassword();
   if (!key && !pw) { msg($("st-buildmsg"), "Give a public key, generate one, or set a password: SSH is what this stick is for.", "err"); return; }
+  if (pw && ST.gen2) { msg($("st-buildmsg"), "This firmware looks like a Gen2 one, which can't keep an SSH password. Use a key instead.", "err"); return; }
   var withMgr = $("st-withmgr").checked;
   msg($("st-buildmsg"), withMgr ? "Downloading the plugin manager and building…" : "Building…");
   api("/api/stick/build", { ScanHandle: ST.scanHandle, Out: out, SSHPubKey: key, SSHPassword: pw, WithManager: withMgr })

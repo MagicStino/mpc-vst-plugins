@@ -24,6 +24,8 @@ checks that the bundle's boot files are present, that `payload.sha256` lists exa
 each package matches its checksum; it then unpacks onto an empty drive like the easy stick. The bundle is picked from a local file
 until a release exists: `tools/desktop/g2stick-pin.json` has an empty url, and a url must be under this repo's releases.
 
+A password SSH stick can't work on a Gen2 (read-only root, found on a Live III 2026-10-29): the page says "Gen2 needs a key", and when the scanned firmware looks Gen2 (its name says Gen2, or it is an aarch64 executable) `stickBuild` refuses a password and the page blocks it.
+
 Below it, a collapsed **Advanced: turn on SSH (for developers)** section (`tools/desktop/stick.go`, a Go port of the salt scan in
 `tools/usb_stick/saltscan.py`, so the app needs no Python) builds a different stick: it reads the device's own stock Akai firmware
 once for the check the stock "USB script" reader needs (MPC OS up to 3.9.1 only; Akai closed that route in 3.10), turns SSH on (paste
