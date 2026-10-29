@@ -133,6 +133,12 @@ func fetchEasyStickPin(pin easyPin) ([]byte, error) {
 // WriteEasyStick unpacks the zip onto out, which must be missing or empty (a drive's own housekeeping aside), the
 // same rule as BuildStick. Entries that would land outside out are refused.
 func WriteEasyStick(out string, data []byte) error {
+	return writeStickZip(out, data, "plugin manager", []string{"autorun/autorun.json", "autorun/autorun.check", "autorun/open.sh", ".mpc-manager-id"})
+}
+
+// writeStickZip is WriteEasyStick for any prebuilt stick: what names the stick in messages, need lists the files that
+// must exist once it is unpacked.
+func writeStickZip(out string, data []byte, what string, need []string) error {
 	if st, err := os.Stat(out); err == nil {
 		if !st.IsDir() {
 			return fmt.Errorf("%s already exists and is not a folder", out)
@@ -156,7 +162,7 @@ func WriteEasyStick(out string, data []byte) error {
 		name := path.Clean(f.Name)
 		if name == "." || strings.HasPrefix(name, "/") || name == ".." || strings.HasPrefix(name, "../") ||
 			strings.Contains(name, `\`) || strings.Contains(name, ":") {
-			return fmt.Errorf("unsafe path in the plugin manager zip: %q", f.Name)
+			return fmt.Errorf("unsafe path in the "+what+" zip: %q", f.Name)
 		}
 	}
 	if err := os.MkdirAll(out, 0755); err != nil {
@@ -189,9 +195,9 @@ func WriteEasyStick(out string, data []byte) error {
 			return err
 		}
 	}
-	for _, need := range []string{"autorun/autorun.json", "autorun/autorun.check", "autorun/open.sh", ".mpc-manager-id"} {
-		if _, err := os.Stat(filepath.Join(out, filepath.FromSlash(need))); err != nil {
-			return fmt.Errorf("the plugin manager zip is missing %s", need)
+	for _, n := range need {
+		if _, err := os.Stat(filepath.Join(out, filepath.FromSlash(n))); err != nil {
+			return fmt.Errorf("the %s zip is missing %s", what, n)
 		}
 	}
 	return nil
