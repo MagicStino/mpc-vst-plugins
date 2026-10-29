@@ -385,3 +385,38 @@ func TestEmbeddedStickScriptsAreTheCanonicalOnes(t *testing.T) {
 		}
 	}
 }
+
+// The advanced stick's open.sh opens the bundled manager the first time only; later insertions just do SSH and addins.
+func TestAdvancedStickOpensTheManagerOnlyOnceUnlessAsked(t *testing.T) {
+	usb := t.TempDir()
+	here := filepath.Join(usb, "autorun")
+	os.MkdirAll(filepath.Join(here, "runtime"), 0755)
+	os.WriteFile(filepath.Join(here, "open.sh"), stickAdvOpenSH, 0644)
+	os.WriteFile(filepath.Join(here, "runtime", "mpc-extras.sh"), []byte("echo extras\n"), 0644)
+	os.WriteFile(filepath.Join(here, "manager-open.sh"), []byte("echo x >> \""+usb+"/launches\"\n"), 0644)
+	launches := func() int {
+		b, _ := os.ReadFile(filepath.Join(usb, "launches"))
+		return strings.Count(string(b), "x")
+	}
+	run := func() {
+		t.Helper()
+		c := exec.Command("sh", filepath.Join(here, "open.sh"))
+		c.Env = append(os.Environ(), "MPC_USB_TEST=1", "TMPDIR="+t.TempDir())
+		if out, err := c.CombinedOutput(); err != nil {
+			t.Fatalf("open.sh: %v %s", err, out)
+		}
+	}
+	run()
+	if launches() != 1 {
+		t.Fatalf("first insertion launched the manager %d times", launches())
+	}
+	run()
+	if launches() != 1 {
+		t.Fatal("second insertion opened the manager again")
+	}
+	os.WriteFile(filepath.Join(usb, "open-plugin-manager.txt"), nil, 0644)
+	run()
+	if launches() != 2 {
+		t.Fatal("open-plugin-manager.txt did not open it")
+	}
+}

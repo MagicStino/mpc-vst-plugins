@@ -147,3 +147,5 @@ CGO_ENABLED=0 go build -trimpath -ldflags="-s -w -X main.version=1.0.0" -o mpc-i
 A browser test of the page against a stand-in device (sshd in a container) lives in `ui_test/`; see its header. The release workflow
 is `.github/workflows/desktop.yml` (Actions, "Desktop installer", Run workflow: builds Windows, macOS and Linux binaries into a
 draft release; install it, try it, then publish).
+
+The SSH stick opens its bundled manager only the first time (it writes `.plugin-manager-opened` on the stick); later insertions just redo SSH and the addins, and a file `open-plugin-manager.txt` on the stick opens it again (2026-10-29: inserting it to get SSH back kept launching the manager). Test: `TestAdvancedStickOpensTheManagerOnlyOnceUnlessAsked`.
