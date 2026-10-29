@@ -283,15 +283,16 @@ footer { color:var(--muted); font-size:12.5px; margin-top:24px; }
       <li>Choose <b>Open</b> on the prompt that appears.</li>
     </ol>
     <p class="small">On 3.9.1, <b>Shift + Menu</b> only brings the manager back while it is already open. It does not start it.</p>
-    <p class="lead"><b>MPC OS 3.10: one-time setup first.</b> <i>3.10 has no USB prompt, so the stick carries a small helper you load once.</i></p>
+    <p class="lead"><b>MPC OS 3.10: one-time setup first.</b> <i>3.10 has no USB prompt, so the stick carries a small helper you load once. After that, inserting the stick offers to open the manager.</i></p>
     <ol>
       <li><b>Delete any old</b> <code>Plugin Manager helper</code> from the internal <b>MPC Documents</b> first: the helper has to match the stick you just made.</li>
       <li><b>Insert</b> the stick.</li>
       <li>In MPC's <b>File Browser</b>, navigate to your USB stick and select <code>Plugin Manager helper.xpa</code>.</li>
       <li>Choose <b>Load</b> and pick the internal <b>MPC Documents</b> folder as the destination, <b>not the stick</b>.</li>
       <li><b>Restart.</b></li>
-      <li>Hold <b>Shift + Menu</b> for two seconds. The manager may also open by itself when you insert the stick.</li>
+      <li>Hold <b>Shift + Menu</b> for two seconds.</li>
     </ol>
+    <p class="small">From then on, on 3.10, a fresh insertion of the stick offers <b>Open</b>. If the stick was already in when MPC started, hold <b>Shift + Menu</b> for two seconds instead.</p>
     <p class="lead"><b>Either way:</b> when you are done, tap <b>Return to MPC</b> and wait up to a minute. <i>Do not power off.</i></p>
   </div>
 </section>
@@ -359,7 +360,7 @@ footer { color:var(--muted); font-size:12.5px; margin-top:24px; }
   <h2><span class="n">3</span>Also include the plugin manager</h2>
   <label style="display:flex;gap:10px;align-items:flex-start;font:400 15px var(--text)"><input type="checkbox" id="st-withmgr" checked style="margin-top:4px">
     <span>Also open the plugin manager from this stick (recommended). It is Twisted Cable's Plugin Manager USB for OPEN MPC (our fork of it, with the OpenMPC Plugin Manager G2 option), downloaded and
-    checked as for the easy stick above. It opens the <b>first time</b> you use the stick, right after SSH is turned on. After that, inserting the stick only re-enables SSH and your addins; put a file called <code>open-plugin-manager.txt</code> on the stick to open the manager again.</span></label>
+    checked as for the plugin manager stick above. It opens the <b>first time</b> you use the stick, right after SSH is turned on. After that, inserting the stick only re-enables SSH and your addins; put a file called <code>open-plugin-manager.txt</code> on the stick to open the manager again.</span></label>
 </section>
 
 <section id="st4" class="off">
@@ -989,8 +990,8 @@ $("es-build").addEventListener("click", function () {
 
 /* Level 1 (beta) stick: ask the MPC OS first, since the stock USB prompt exists only up to 3.9.1. */
 var L1_OS = {
-  "new": "MPC OS 3.10 has no USB prompt, so this stick can't run there. Use the plugin install stick above: its 3.10 steps load a helper once, then the manager's welcome screen has an OpenMPC Plugin Manager G2 button.",
-  unsure: "Check Menu, Preferences, About (or Settings, Info) on the MPC. If it says 3.9.1 or earlier, choose that. If it says 3.10, use the plugin install stick above."
+  "new": "MPC OS 3.10 has no USB prompt, so this stick can't run there. Use the plugin manager stick below: its steps load a small helper once (on 3.10 only), and its welcome screen has an OpenMPC Plugin Manager G2 button.",
+  unsure: "Check Menu, Preferences, About (or Settings, Info) on the MPC. If it says 3.9.1 or earlier, choose that. If it says 3.10, use the plugin manager stick below."
 };
 Array.prototype.forEach.call(document.getElementsByName("l1-os"), function (r) {
   r.addEventListener("change", function () {

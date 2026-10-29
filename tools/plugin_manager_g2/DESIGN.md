@@ -252,7 +252,7 @@ adapt `docs/UPSTREAM_TESTING.md`, plus: unlisted target shows the banner; a list
 
 - **Does `systemd-run` detach work on Gen2 3.10?** poloq's code has an "untested" cgroup fallback; only Gen1 was run. Device test needed before M3 is called done.
 - **Leaf name**: must the location end in `Synths`? Untested on a device.
-- **How is the manager itself installed on Gen2 3.10?** There is no autorun route; use `mpc-vst-plugins`' desktop app or Eurikon's helper (does not open on 3.10 yet).
+- **How is the manager itself installed on Gen2 3.10?** There is no autorun route; use `mpc-vst-plugins`' desktop app (its plugin manager stick opened on a stock 3.10 Live III, 2026-10-29, through the helper imported once into MPC Documents).
 - **Licence of PR #7/#8 code**: ask before copying (NOTICE.md).
 - **Name**: "MPC" is Akai's mark; the project already uses it descriptively. Keep "OpenMPC" wording off logos and the plugin's skin art.
 - **exFAT and symlinks** (section 3): test a package that ships a symlink on `/nvme`.

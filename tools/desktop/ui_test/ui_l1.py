@@ -29,7 +29,7 @@ try:
         check("form hidden until an OS is chosen", not pg.is_visible("#l1-form"))
         pg.check("input[name=l1-os][value=new]")
         check("3.10 hides the writer", not pg.is_visible("#l1-form"))
-        check("3.10 points to the easy stick", "3.10" in pg.inner_text("#l1-os-msg") and "install stick" in pg.inner_text("#l1-os-msg"))
+        check("3.10 points to the plugin manager stick", "3.10" in pg.inner_text("#l1-os-msg") and "plugin manager stick" in pg.inner_text("#l1-os-msg"))
         pg.check("input[name=l1-os][value=unsure]")
         check("not sure hides the writer", not pg.is_visible("#l1-form") and pg.inner_text("#l1-os-msg") != "")
         pg.check("input[name=l1-os][value=old]")
