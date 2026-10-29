@@ -29,6 +29,23 @@ tested on a Live III. Not done: SSH and addin reapply on his stick. His `open.sh
 `autorun/manager-open.sh` and the check computed over all of it from the user's firmware. Untested on a device: whether his manager's
 "Install to SD" and update still accept the rewritten `USB-SHA256.json`.
 
+## Installer sections and the Level 1 stick (2026-10-29)
+
+The desktop installer's stick page has three sections, each titled with the MPC OS it supports:
+1. **Basic user: one-prompt install stick (MPC OS 3.9.1 and earlier only).** The "Level 1" stick, `tools/usb_g2`: our own `open.sh` and
+   `runtime/run.sh` install the OpenMPC Plugin Manager G2 for the device it runs on (armv7 or aarch64 package, folder chosen per device). The
+   installer downloads the pinned bundle (`tools/desktop/g2stick-pin.json`, hash-checked; a local file is optional). Device-verified on a
+   Force and a Live III (G2 0.2.1). The stock check covers `open.sh`, `run.sh` and `payload.sha256`, which pins the packages, so each G2
+   release needs a rebuilt bundle (`tools/usb_g2/build_stick.py`, from the user's own firmware; only the derived check ships).
+2. **Plugin manager stick (all MPC OS versions, including 3.10).** Eurikon's stick (our fork build, pinned); the 3.10 route is his helper,
+   which must match the stick release (delete any old helper first). Confirmed on a Live III running stock 3.10, 2026-10-29: it opened from
+   the stick (also on insertion, not understood) and with Shift + Menu; on 3.9.1 Shift + Menu only reopens an armed session.
+3. **For developers: turn on SSH (MPC OS 3.9.1 and earlier only).** Our SSH and addin stick, optionally with his manager bundled. It cannot
+   run on 3.10: the helper never runs the stick's `open.sh`. Findings (device, 2026-10-29): a Gen2 root is read-only, so a password cannot
+   be kept and the installer now blocks it (use a key; SSH then lasts until reboot); a Force's busybox has no `chpasswd`, so the password
+   falls back to a hash written into the shadow file (openssl on the Force). The bundled manager opens only the first time; put
+   `open-plugin-manager.txt` on the stick to open it again.
+
 ## How the route works
 
 MPC OS up to 3.9.1 (Gen1 and Force) has a stock "USB script" reader. A stick with `autorun/autorun.json`, `autorun/autorun.check`
