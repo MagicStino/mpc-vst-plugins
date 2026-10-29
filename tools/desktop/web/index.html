@@ -255,7 +255,7 @@ footer { color:var(--muted); font-size:12.5px; margin-top:24px; }
     <li><b>Works on:</b>
       <ul>
         <li><b>MPC OS 3.9.1:</b> Gen1 MPC (Live, One, X, Key), Force and Gen2 (Live III, One G2, Key(s) G2).</li>
-        <li><b>MPC OS 3.10:</b> Gen1 MPC (needs a one-time setup, see the steps below).</li>
+        <li><b>MPC OS 3.10:</b> Gen1 MPC and Gen2 (a Live III on stock 3.10 is confirmed). Needs a one-time setup, see the steps below.</li>
       </ul></li>
     <li><b>Why use this one instead of the basic stick:</b>
       <ul>
@@ -282,13 +282,15 @@ footer { color:var(--muted); font-size:12.5px; margin-top:24px; }
       <li><b>Insert</b> the stick.</li>
       <li>Choose <b>Open</b> on the prompt that appears.</li>
     </ol>
+    <p class="small">On 3.9.1, <b>Shift + Menu</b> only brings the manager back while it is already open. It does not start it.</p>
     <p class="lead"><b>MPC OS 3.10: one-time setup first.</b> <i>3.10 has no USB prompt, so the stick carries a small helper you load once.</i></p>
     <ol>
+      <li><b>Delete any old</b> <code>Plugin Manager helper</code> from the internal <b>MPC Documents</b> first: the helper has to match the stick you just made.</li>
       <li><b>Insert</b> the stick.</li>
       <li>In MPC's <b>File Browser</b>, navigate to your USB stick and select <code>Plugin Manager helper.xpa</code>.</li>
       <li>Choose <b>Load</b> and pick the internal <b>MPC Documents</b> folder as the destination, <b>not the stick</b>.</li>
       <li><b>Restart.</b></li>
-      <li>Hold <b>Shift + Menu</b> for two seconds.</li>
+      <li>Hold <b>Shift + Menu</b> for two seconds. The manager may also open by itself when you insert the stick.</li>
     </ol>
     <p class="lead"><b>Either way:</b> when you are done, tap <b>Return to MPC</b> and wait up to a minute. <i>Do not power off.</i></p>
   </div>
