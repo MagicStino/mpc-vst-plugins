@@ -38,7 +38,7 @@ The desktop installer's stick page has three sections, each titled with the MPC 
    Force and a Live III (G2 0.2.1). The stock check covers `open.sh`, `run.sh` and `payload.sha256`, which pins the packages, so each G2
    release needs a rebuilt bundle (`tools/usb_g2/build_stick.py`, from the user's own firmware; only the derived check ships).
 2. **Plugin manager stick (all MPC OS versions, including 3.10).** Eurikon's stick (our fork build, pinned); the 3.10 route is his helper,
-   which must match the stick release (delete any old helper first). Confirmed on a Live III running stock 3.10, 2026-10-29: it opened from
+   which must match the stick release (delete any old helper first). The installer now says to insert the stick first (on a stock 3.10 Live III it opened by itself, one observation, 2026-10-29), then Shift + Menu, then the helper setup; on the overlay (3.10 over 3.9.1) the stock 3.9.1 prompt appears as usual. Confirmed on a Live III running stock 3.10, 2026-10-29: it opened from
    the stick (also on insertion, not understood) and with Shift + Menu; on 3.9.1 Shift + Menu only reopens an armed session.
 3. **For developers: turn on SSH (MPC OS 3.9.1 and earlier only).** Our SSH and addin stick, optionally with his manager bundled. It cannot
    run on 3.10: the helper never runs the stick's `open.sh`. Findings (device, 2026-10-29): a Gen2 root is read-only, so a password cannot
