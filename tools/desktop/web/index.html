@@ -253,6 +253,36 @@ footer { color:var(--muted); font-size:12.5px; margin-top:24px; }
     <p class="lead"><b>Either way:</b> when you are done, tap <b>Return to MPC</b> and wait up to a minute. <i>Do not power off.</i></p>
   </div>
 </section>
+<details id="l1" class="collapse">
+<summary><h2>Beta: one-prompt G2 install stick (MPC OS 3.9.1 or earlier)</h2><span class="hint">Show</span></summary>
+<section class="guide">
+  <ul>
+    <li><b>What it is:</b> a stick that installs the <b>OpenMPC Plugin Manager G2</b> for you. Confirm one prompt and MPC restarts with it installed. No SSH, no network, no manager screens to learn. <i>Private beta.</i></li>
+    <li><b>Which MPC OS are you on?</b>
+      <label><input type="radio" name="l1-os" value="old"> 3.9.1 or earlier</label>
+      <label><input type="radio" name="l1-os" value="new"> 3.10</label>
+      <label><input type="radio" name="l1-os" value="unsure"> Not sure</label></li>
+  </ul>
+  <p class="msg" id="l1-os-msg" role="status" aria-live="polite"></p>
+  <div id="l1-form" hidden>
+    <div class="row">
+      <label class="f">Level 1 stick bundle (.zip)<input id="l1-bundle" type="text" placeholder="no published bundle yet: choose the file you were given" spellcheck="false"></label>
+      <button id="l1-bundle-browse" type="button">Browse…</button>
+    </div>
+    <div class="row">
+      <label class="f">Empty USB stick or folder<input id="l1-out" type="text" placeholder="a mounted stick, or Browse" spellcheck="false"></label>
+      <button id="l1-out-browse" type="button">Browse…</button>
+      <button class="primary" id="l1-build" type="button">Write stick…</button>
+    </div>
+    <p class="msg" id="l1-msg" role="status" aria-live="polite"></p>
+    <ol>
+      <li>Save your project. The install stops MPC.</li>
+      <li>Insert the stick and choose <b>Open</b> on the prompt.</li>
+      <li>Wait for MPC to restart. A <code>g2-install-result.txt</code> on the stick says what happened.</li>
+    </ol>
+  </div>
+</section>
+</details>
 <details id="dadv" class="collapse">
 <summary><h2>Advanced: turn on SSH (for developers)</h2><span class="hint">Show</span></summary>
 <section id="st-intro" class="guide">
@@ -928,6 +958,30 @@ $("es-build").addEventListener("click", function () {
     var where = stickOutIsAMountedDrive(out) ? "That's a mounted drive, so it's already on the stick." : "Copy everything in " + r.out + " (hidden files too) to the root of a FAT32 or exFAT USB stick.";
     msg($("es-msg"), "Wrote " + r.version + " to " + r.out + ". " + where + " Eject it safely, then follow the steps below for your MPC OS.", "ok");
   }).catch(function (e) { msg($("es-msg"), e.message, "err"); });
+});
+
+/* Level 1 (beta) stick: ask the MPC OS first, since the stock USB prompt exists only up to 3.9.1. */
+var L1_OS = {
+  "new": "MPC OS 3.10 has no USB prompt, so this stick can't run there. Use the plugin install stick above: its 3.10 steps load a helper once, then the manager's welcome screen has an OpenMPC Plugin Manager G2 button.",
+  unsure: "Check Menu, Preferences, About (or Settings, Info) on the MPC. If it says 3.9.1 or earlier, choose that. If it says 3.10, use the plugin install stick above."
+};
+Array.prototype.forEach.call(document.getElementsByName("l1-os"), function (r) {
+  r.addEventListener("change", function () {
+    var old = r.value === "old";
+    $("l1-form").hidden = !old;
+    msg($("l1-os-msg"), old ? "" : L1_OS[r.value], old ? "" : "err");
+  });
+});
+$("l1-bundle-browse").addEventListener("click", function () { openBrowse("file", $("l1-bundle"), $("l1-bundle").value.trim()); });
+$("l1-out-browse").addEventListener("click", function () { openBrowse("dir", $("l1-out"), $("l1-out").value.trim()); });
+$("l1-build").addEventListener("click", function () {
+  var out = $("l1-out").value.trim();
+  if (!out) { msg($("l1-msg"), "Pick an empty USB stick or folder first.", "err"); return; }
+  msg($("l1-msg"), "Checking and writing…");
+  api("/api/stick/g2", { Out: out, Bundle: $("l1-bundle").value.trim() }).then(function (r) {
+    var where = stickOutIsAMountedDrive(out) ? "That's a mounted drive, so it's already on the stick." : "Copy everything in " + r.out + " (hidden files too) to the root of a FAT32 or exFAT USB stick.";
+    msg($("l1-msg"), "Wrote the Level 1 stick (" + r.version + ") to " + r.out + ". " + where + " Eject it safely, then follow the steps below.", "ok");
+  }).catch(function (e) { msg($("l1-msg"), e.message, "err"); });
 });
 
 api("/api/version").then(function (v) {

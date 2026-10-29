@@ -17,6 +17,13 @@ releases), so adopting a tested release is a one-file PR with no installer relea
 constants are the offline fallback, refreshed at the next installer release, and unpacks it onto an empty drive. It needs no firmware: the bundle carries the
 OS 3.9.1 autorun route and the OS 3.10 controller helper, and picks the Gen1 or Gen2 runtime on the device.
 
+A collapsed **Beta: one-prompt G2 install stick** section (`tools/desktop/g2stick.go`, added 2026-10-29, offline-tested only) asks
+the MPC OS first (the stock USB prompt exists only up to 3.9.1; 3.10 and "not sure" point back to the easy stick) and writes the
+"Level 1" bundle from `tools/usb_g2/build_stick.py`: our own autorun script plus both G2 packages. Before writing anything it
+checks that the bundle's boot files are present, that `payload.sha256` lists exactly one armv7 and one aarch64 package, and that
+each package matches its checksum; it then unpacks onto an empty drive like the easy stick. The bundle is picked from a local file
+until a release exists: `tools/desktop/g2stick-pin.json` has an empty url, and a url must be under this repo's releases.
+
 Below it, a collapsed **Advanced: turn on SSH (for developers)** section (`tools/desktop/stick.go`, a Go port of the salt scan in
 `tools/usb_stick/saltscan.py`, so the app needs no Python) builds a different stick: it reads the device's own stock Akai firmware
 once for the check the stock "USB script" reader needs (MPC OS up to 3.9.1 only; Akai closed that route in 3.10), turns SSH on (paste
