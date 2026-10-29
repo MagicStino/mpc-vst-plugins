@@ -79,6 +79,12 @@ Once it is listed in the catalog it should also install by id (`plugin-manager-g
 3. Press **APPLY**, check the summary, and confirm. Save your project first: MPC restarts.
 4. Reopen the manager. The status line reports the result; the new plugin is in the browser.
 
+**Choose where plugins go.** When more than one place can take plugins (the user drive and an SSD or card, say), the restart prompt names the
+folder the new ones will go to, with a **CHANGE** button that steps through the usable places. The place you confirm is remembered as the default
+for new installs; updates always stay where the plugin already is.
+
+![The restart prompt on a Force: "Install to: /media/662522/Synths (2 of 2)" with a CHANGE button](docs/screenshots/manager-install-location.png)
+
 **If something looks wrong**, the manager writes plain-text reports on the device: `/tmp/openmpc-pm/device.txt` (what it found: locations and why each
 was accepted or refused, tools, glibc), `manager.log`, and `apply.log` (what the last apply did). Attach `device.txt` to a bug report.
 
@@ -98,6 +104,10 @@ tools/plugin_manager_g2/vst/build_themes.sh aarch64        # plugin + light and 
 tools/plugin_manager_g2/tests/run.sh                      # the offline suite (about 9 minutes; needs Docker and network)
 ONLY=safety tools/plugin_manager_g2/tests/run.sh          # one section: devices addins links pick theme safety arch
 ```
+
+**Thumbnails** are baked into the skin when a release is built, so a plugin added to the catalog later shows its initials until the next release. A weekly
+check (`.github/workflows/plugin-manager-g2-thumbs.yml`, `vst/thumbs_check.sh`) regenerates them from the live catalog and, when there are new ones,
+pushes a branch and opens a pull request (or an issue with a compare link) for review; it never releases anything.
 
 `DESIGN.md` has the design and the evidence behind it (what was seen on a device and what is only offline); `docs/NOTES.md` in the repo root has
 the dated device findings. Releases are built by `.github/workflows/plugin-manager-g2.yml`.
