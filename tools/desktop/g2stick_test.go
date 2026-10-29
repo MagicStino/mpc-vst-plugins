@@ -108,10 +108,31 @@ func TestG2PinNeedsAReleaseUnderOurRepo(t *testing.T) {
 	}
 }
 
-func TestShippedG2PinIsEmptyUntilAReleaseExists(t *testing.T) {
+func TestShippedG2PinIsValid(t *testing.T) {
 	b, err := os.ReadFile("g2stick-pin.json")
-	if err != nil || !strings.Contains(string(b), `"url": ""`) {
-		t.Fatalf("g2stick-pin.json: %v %s", err, b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { w.Write(b) }))
+	defer srv.Close()
+	old := g2PinURL
+	g2PinURL = srv.URL
+	defer func() { g2PinURL = old }()
+	if _, err := currentG2Pin(); err != nil {
+		t.Fatalf("the shipped g2stick-pin.json is not a valid pin: %v", err)
+	}
+}
+
+func TestFetchG2StickChecksTheHash(t *testing.T) {
+	body := easyZip(t, goodG2())
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { w.Write(body) }))
+	defer srv.Close()
+	h := sha256.Sum256(body)
+	if data, err := fetchG2Stick(easyPin{Version: "v", URL: srv.URL, SHA256: hex.EncodeToString(h[:])}); err != nil || len(data) != len(body) {
+		t.Fatalf("matching hash refused: %v", err)
+	}
+	if _, err := fetchG2Stick(easyPin{Version: "v", URL: srv.URL, SHA256: strings.Repeat("0", 64)}); err == nil {
+		t.Fatal("a wrong hash was accepted")
 	}
 }
 
